@@ -1,0 +1,43 @@
+---
+import SideBar from "../components/SideBar.svelte";
+---
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <meta name="viewport" content="width=device-width" />
+        <meta name="generator" content={Astro.generator} />
+        <title>3636 Autopilot Planner</title>
+    </head>
+    <body>
+        <div class="main-layout">
+            <div class="sidebar-container">
+                <SideBar client:only />
+            </div>
+            <div class="field-view-container"></div>
+        </div>
+    </body>
+</html>
+
+<style>
+    body {
+        margin: 0;
+
+        background-color: #222;
+        color: #eee;
+    }
+
+    .main-layout {
+        height: 100vh;
+        width: 100vw;
+        display: flex;
+        flex-direction: row;
+    }
+    .sidebar-container {
+        width: 30vw;
+    }
+    .field-view-container {
+        width: 100%;
+    }
+</style>
