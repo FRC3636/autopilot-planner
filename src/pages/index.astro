@@ -1,7 +1,7 @@
 ---
 import SideBar from "../components/SideBar.svelte";
 import FieldView from "../components/FieldView.svelte";
-import "../styles/fonts.css"
+import "../styles/fonts.css";
 ---
 
 <html lang="en">
@@ -23,6 +23,18 @@ import "../styles/fonts.css"
         </div>
     </body>
 </html>
+
+<script>
+    import { selected_target } from "../scripts/target";
+
+    window.addEventListener("keydown", (e) => {
+        switch (e.key) {
+            case "Escape":
+                selected_target.set(null);
+                break;
+        }
+    });
+</script>
 
 <style>
     :root {
@@ -48,7 +60,7 @@ import "../styles/fonts.css"
         margin-block: 0.2em;
     }
     :global(h2) {
-        margin-block: 0.3em
+        margin-block: 0.3em;
     }
 
     .main-layout {
@@ -60,6 +72,7 @@ import "../styles/fonts.css"
     .sidebar-container {
         width: 30vw;
         padding: 10px;
+        overflow-y: scroll;
     }
     .field-view-container {
         width: 100%;

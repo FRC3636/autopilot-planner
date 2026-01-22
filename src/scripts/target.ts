@@ -4,20 +4,13 @@ export interface Target {
   entry_angle?: number;
   ending_velocity?: number;
   turning_radius?: number;
-  pose: {
+  name: string;
+  reference: {
     x: number;
     y: number;
     rotation: number;
   };
 }
 
-const example_target: Target = {
-  pose: {
-    x: 0,
-    y: 0,
-    rotation: 0,
-  },
-};
-
 export const selected_target: Writable<number | null> = writable(0);
-export const targets: Writable<Target[]> = writable([example_target]);
+export const targets: Writable<Target[]> = writable([]);

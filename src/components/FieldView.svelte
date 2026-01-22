@@ -6,6 +6,7 @@
     const field_width = 16.54048; //meters
     const field_height = 8.06958; //meters
     var pixels_to_meters: number = 0;
+    var field_container_bounds: DOMRect = new DOMRect();
 
     interface Position {
         x: number;
@@ -33,7 +34,7 @@
             }
         }
 
-        const field_container_bounds = field_image.getBoundingClientRect();
+        field_container_bounds = field_image.getBoundingClientRect();
         pixels_to_meters = field_width / field_container_bounds.width;
 
         const relative_touch_coords = {
@@ -43,7 +44,8 @@
         const real_coords = pixels_to_real(relative_touch_coords);
 
         const new_target: Target = {
-            pose: {
+            name: `Target ${$targets.length + 1}`,
+            reference: {
                 x: real_coords.x,
                 y: real_coords.y,
                 rotation: 0,
@@ -61,11 +63,17 @@
 <div class="field-container" onclick={handle_click}>
     {#each $targets.entries() as [index, target]}
         <div
-            class="target"
+            class={index === $selected_target
+                ? "target selected exclude_tap"
+                : "target exclude_tap"}
             style={`transform: translate(
-              ${real_to_pixels(target.pose).x}px,
-              ${real_to_pixels(target.pose).y}px
+              ${real_to_pixels(target.reference).x - 25 / 2}px,
+              ${real_to_pixels(target.reference).y + field_container_bounds.y - 25}px
             )`}
+            onclick={() =>
+                selected_target.update((value) =>
+                    value === index ? null : index,
+                )}
         ></div>
     {/each}
     <img src="/field.svg" bind:this={field_image} class="field-image" />
@@ -82,12 +90,21 @@
     }
     .field-image {
         width: 100%;
+        pointer-events: none;
+        user-select: none;
     }
 
     .target {
+        top: 0;
+        left: 0;
         position: absolute;
         width: 25px;
         height: 25px;
         border-radius: 100%;
+        background-color: #fff;
+    }
+
+    .target.selected {
+        background-color: #ea0;
     }
 </style>
