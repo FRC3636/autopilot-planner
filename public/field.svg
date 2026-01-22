@@ -1,0 +1,35 @@
+<svg width="1406" height="697" viewBox="0 0 1406 697" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="2" y="2" width="1402" height="693" stroke="black" stroke-width="4"/>
+<path d="M2 595V673" stroke="#414141" stroke-width="4"/>
+<path d="M3 349L1402 349" stroke="#494848" stroke-width="8"/>
+<path d="M703 2V693" stroke="white" stroke-width="4"/>
+<path d="M402 0.5H388V116H344V141H388H402H445V116H402V0.5Z" fill="#D04444"/>
+<path d="M388 697L402 697L402 581.5L446 581.5L446 556L402 556L388 556L345 556L345 581.5L388 581.5L388 697Z" fill="#D04444"/>
+<rect x="345" y="298" width="100" height="101" fill="#D58E8E"/>
+<path d="M347 399H395V556H347V399Z" fill="#962525"/>
+<path d="M395 399H443V556H395V399Z" fill="#C33B3B"/>
+<path d="M347 141H395V298H347V141Z" fill="#962525"/>
+<path d="M395 141H443V298H395V141Z" fill="#C33B3B"/>
+<path d="M1004 697L1018 697L1018 581L1062 581L1062 556L1018 556L1004 556L961 556L961 581L1004 581L1004 697Z" fill="#446ED0"/>
+<path d="M1018 0L1004 -2.44784e-06L1004 115.5L960 115.5L960 141L1004 141L1018 141L1061 141L1061 115.5L1018 115.5L1018 0Z" fill="#446ED0"/>
+<rect x="1061" y="399" width="100" height="101" transform="rotate(-180 1061 399)" fill="#8EA3D5"/>
+<path d="M1059 298L1011 298L1011 141L1059 141L1059 298Z" fill="#254796"/>
+<path d="M1011 298L963 298L963 141L1011 141L1011 298Z" fill="#3B64C3"/>
+<path d="M1059 556L1011 556L1011 399L1059 399L1059 556Z" fill="#254796"/>
+<path d="M1011 556L963 556L963 399L1011 399L1011 556Z" fill="#3B64C3"/>
+<mask id="path-15-inside-1_82_67" fill="white">
+<path d="M4 140H62V231H4V140Z"/>
+</mask>
+<path d="M62 140H69V133H62V140ZM62 231V238H69V231H62ZM4 140V147H62V140V133H4V140ZM62 140H55V231H62H69V140H62ZM62 231V224H4V231V238H62V231Z" fill="#B33B3B" mask="url(#path-15-inside-1_82_67)"/>
+<mask id="path-17-inside-2_82_67" fill="white">
+<path d="M1402 557L1344 557L1344 466L1402 466L1402 557Z"/>
+</mask>
+<path d="M1344 557L1337 557L1337 564L1344 564L1344 557ZM1344 466L1344 459L1337 459L1337 466L1344 466ZM1402 557L1402 550L1344 550L1344 557L1344 564L1402 564L1402 557ZM1344 557L1351 557L1351 466L1344 466L1337 466L1337 557L1344 557ZM1344 466L1344 473L1402 473L1402 466L1402 459L1344 459L1344 466Z" fill="#3B5FB3" mask="url(#path-17-inside-2_82_67)"/>
+<rect x="3" y="331" width="98" height="84" fill="#414141"/>
+<rect x="92" y="322" width="3" height="102" fill="#D04444"/>
+<rect x="1402" y="366" width="98" height="84" transform="rotate(-180 1402 366)" fill="#414141"/>
+<rect x="1313" y="375" width="3" height="102" transform="rotate(-180 1313 375)" fill="#446ED0"/>
+<path d="M342.5 4.5V693" stroke="#DF3939" stroke-width="5"/>
+<path d="M1063.5 692.5L1063.5 3.99988" stroke="#396BDF" stroke-width="5"/>
+<path d="M1404 25V103" stroke="#414141" stroke-width="4"/>
+</svg>
