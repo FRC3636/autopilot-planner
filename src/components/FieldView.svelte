@@ -26,22 +26,36 @@
         };
     }
 
-    function handle_click(e: MouseEvent) {
+    function field_relative_real_coords(coords: Position): Position {
+        const relative_touch_coords = {
+            x: coords.x - field_container_bounds.x,
+            y: coords.y - field_container_bounds.y,
+        };
+        return pixels_to_real(relative_touch_coords);
+    }
+
+    function target_has_class(e: MouseEvent, class_name: string): boolean {
         if (e.target) {
             const elem = e.target as Element;
-            if ((elem.getAttribute("class") || "").includes("exclude_tap")) {
-                return;
+            if ((elem.getAttribute("class") || "").includes(class_name)) {
+                return true;
             }
+        }
+        return false;
+    }
+
+    function handle_click(e: MouseEvent) {
+        if (target_has_class(e, "exclude_tap")) {
+            return;
         }
 
         field_container_bounds = field_image.getBoundingClientRect();
         pixels_to_meters = field_width / field_container_bounds.width;
 
-        const relative_touch_coords = {
-            x: e.clientX - field_container_bounds.x,
-            y: e.clientY - field_container_bounds.y,
-        };
-        const real_coords = pixels_to_real(relative_touch_coords);
+        const real_coords = field_relative_real_coords({
+            x: e.clientX,
+            y: e.clientY,
+        });
 
         const new_target: Target = {
             name: `Target ${$targets.length + 1}`,
@@ -60,7 +74,7 @@
     }
 </script>
 
-<div class="field-container" onclick={handle_click}>
+<div class="field-container" onmousedown={handle_click}>
     {#each $targets.entries() as [index, target]}
         <div
             class={index === $selected_target
@@ -69,12 +83,38 @@
             style={`transform: translate(
               ${real_to_pixels(target.reference).x - 25 / 2}px,
               ${real_to_pixels(target.reference).y + field_container_bounds.y - 25}px
-            )`}
-            onclick={() =>
+            ) rotateZ(${-target.reference.rotation}deg)`}
+            onclick={(e) => {
+                if (!target_has_class(e, "target")) {
+                    return;
+                }
+
                 selected_target.update((value) =>
                     value === index ? null : index,
-                )}
-        ></div>
+                );
+            }}
+        >
+            {#if index === $selected_target}
+                <div
+                    class="rotator exclude_tap"
+                    onmousedown={(e) => {
+                        const real_tap_coords = field_relative_real_coords({
+                            x: e.clientX,
+                            y: e.clientY,
+                        });
+                        const target_to_cursor = {
+                            x: real_tap_coords.x - $targets[index].reference.x,
+                            y: real_tap_coords.y - $targets[index].reference.y,
+                        };
+                        const new_theta = Math.atan(target_to_cursor.y / target_to_cursor.x)
+
+                        const current_targets = $targets;
+                        current_targets[index].reference.rotation = new_theta;
+                        targets.set(current_targets);
+                    }}
+                ></div>
+            {/if}
+        </div>
     {/each}
     <img src="/field.svg" bind:this={field_image} class="field-image" />
 </div>
@@ -100,11 +140,26 @@
         position: absolute;
         width: 25px;
         height: 25px;
+        border-radius: 5px;
+        border: 2px solid #fff;
+
+        contain: layout;
+    }
+    .rotator {
+        --size: 8px;
+
+        width: var(--size);
+        height: var(--size);
+
+        position: absolute;
+        right: -100%;
+        top: calc(50% - (var(--size) / 2));
+
         border-radius: 100%;
         background-color: #fff;
     }
 
     .target.selected {
-        background-color: #ea0;
+        border-color: #ea0;
     }
 </style>

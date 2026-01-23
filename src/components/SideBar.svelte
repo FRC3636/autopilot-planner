@@ -14,7 +14,7 @@
                 <ul>
                     <li>X: {current_target.reference.x}</li>
                     <li>Y: {current_target.reference.y}</li>
-                    <li>ϑ: {current_target.reference.rotation}</li>
+                    <li>θ: {current_target.reference.rotation}</li>
                 </ul>
             </li>
             <li>
