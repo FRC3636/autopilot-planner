@@ -25,7 +25,7 @@ import "../styles/fonts.css";
 </html>
 
 <script>
-    import { selected_target } from "../scripts/target";
+    import { selected_target, targets, type Target } from "../scripts/target";
 
     window.addEventListener("keydown", (e) => {
         switch (e.key) {
@@ -71,12 +71,14 @@ import "../styles/fonts.css";
     }
     .sidebar-container {
         width: 30vw;
+        margin: 10px;
         padding: 10px;
+        border-radius: var(--border-radius);
         overflow-y: scroll;
+        background-color: #333;
     }
     .field-view-container {
         width: 100%;
-        background-color: #333;
         padding: 10px;
         border-radius: var(--border-radius) 0 0 var(--border-radius);
     }
