@@ -1,5 +1,6 @@
 <script lang="ts">
-    import { selected_target, targets, type Target } from "../scripts/target";
+    import { export_targets_to_kotlin_enum } from "../scripts/export";
+    import { selected_target, targets, type Target } from "../scripts/store";
 
     $: current_target =
         $selected_target !== null ? $targets[$selected_target] : null;
@@ -144,6 +145,11 @@
         </form>
     {:else}
         <h1>Targets</h1>
+        <button
+            onclick={() => console.log(export_targets_to_kotlin_enum($targets))}
+        >
+            Export Targets
+        </button>
         <ul>
             {#each $targets.entries() as [index, target]}
                 <li>

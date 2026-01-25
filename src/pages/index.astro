@@ -25,14 +25,60 @@ import "../styles/fonts.css";
 </html>
 
 <script>
-    import { selected_target, targets, type Target } from "../scripts/target";
+    import { import_targets_from_json } from "../scripts/export";
+    import { export_targets_to_json } from "../scripts/export";
+    import {
+        selected_target,
+        targets,
+        snapping_enabled,
+        type Target,
+    } from "../scripts/store";
 
     window.addEventListener("keydown", (e) => {
         switch (e.key) {
             case "Escape":
                 selected_target.set(null);
                 break;
+            case "Alt":
+                snapping_enabled.set(true);
         }
+    });
+    window.addEventListener("keyup", (e) => {
+        switch (e.key) {
+            case "Alt":
+                snapping_enabled.set(false);
+        }
+    });
+
+    let latestValue: Target[] = [];
+    let scheduled = false;
+
+    targets.subscribe((value) => {
+        latestValue = value;
+
+        if (scheduled) return;
+        scheduled = true;
+
+        setTimeout(async () => {
+            console.log("Exporting targets...");
+            const json_export = export_targets_to_json(latestValue);
+            const directory = await navigator.storage.getDirectory();
+            const file = await directory.getFileHandle("targets.json", {
+                create: true,
+            });
+
+            const stream = await file.createWritable();
+            await stream.write(json_export);
+            await stream.close();
+
+            scheduled = false;
+        }, 250);
+    });
+
+    await navigator.storage.getDirectory().then(async (dir) => {
+        const file = await dir.getFileHandle("targets.json");
+        const json = await file.getFile().then((file) => file.text());
+        targets.set(import_targets_from_json(json));
     });
 </script>
 
@@ -76,10 +122,12 @@ import "../styles/fonts.css";
         border-radius: var(--border-radius);
         overflow-y: scroll;
         background-color: #333;
+        z-index: 100;
     }
     .field-view-container {
         width: 100%;
         padding: 10px;
         border-radius: var(--border-radius) 0 0 var(--border-radius);
+        overflow: hidden;
     }
 </style>
