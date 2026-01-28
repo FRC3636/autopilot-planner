@@ -1,10 +1,19 @@
-import type { Target } from "./store";
+import type { Settings, Target } from "./store";
 import * as changeCase from "change-case";
 
-export function export_targets_to_json(targets: Target[]): string {
-  return JSON.stringify(targets);
+export function export_state_to_json(
+  targets: Target[],
+  settings: Settings,
+): string {
+  return JSON.stringify({
+    targets: targets,
+    settings: settings,
+  });
 }
-export function import_targets_from_json(json: string): Target[] {
+export function import_state_from_json(json: string): {
+  targets: Target[];
+  settings: Settings;
+} {
   return JSON.parse(json);
 }
 
@@ -34,4 +43,8 @@ enum class Targets(val target: APTarget) {
     ${targets.map((target) => `${changeCase.pascalCase(target.name, { mergeAmbiguousCharacters: true })}(${target_to_ap(target)})`).join(",\n    ")}
 }
   `;
+}
+
+export function copy_kotlin_to_clipboard(targets: Target[]): void {
+  navigator.clipboard.writeText(export_targets_to_kotlin_enum(targets));
 }

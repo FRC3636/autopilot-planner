@@ -1,9 +1,18 @@
 <script lang="ts">
-    import { export_targets_to_kotlin_enum } from "../scripts/export";
-    import { selected_target, targets, type Target } from "../scripts/store";
+    import {
+        copy_kotlin_to_clipboard,
+        export_targets_to_kotlin_enum,
+    } from "../scripts/export";
+    import {
+        modal_state,
+        selected_target,
+        targets,
+        type Target,
+    } from "../scripts/store";
 
-    $: current_target =
-        $selected_target !== null ? $targets[$selected_target] : null;
+    const current_target = $derived(() =>
+        $selected_target !== null ? $targets[$selected_target] : null,
+    );
 
     function set_selected_target_prop<T extends keyof Target>(
         prop: T,
@@ -30,15 +39,15 @@
 </script>
 
 <div>
-    {#if current_target}
-        <h1>{current_target.name}</h1>
+    {#if current_target()}
+        <h1>{current_target()!.name}</h1>
         <h2>Pose</h2>
         <form>
             <label>
                 X:
                 <input
                     type="number"
-                    value={current_target.reference.x}
+                    value={current_target()!.reference.x}
                     step="0.1"
                     oninput={(e) =>
                         set_selected_target_reference({
@@ -51,7 +60,7 @@
                 Y:
                 <input
                     type="number"
-                    value={current_target.reference.y}
+                    value={current_target()!.reference.y}
                     step="0.1"
                     oninput={(e) =>
                         set_selected_target_reference({
@@ -64,7 +73,7 @@
                 θ:
                 <input
                     type="number"
-                    value={current_target.reference.rotation}
+                    value={current_target()!.reference.rotation}
                     step="0.1"
                     oninput={(e) =>
                         set_selected_target_reference({
@@ -79,8 +88,8 @@
                 Ending Velocity:
                 <input
                     type="number"
-                    disabled={current_target.ending_velocity === undefined}
-                    value={current_target.ending_velocity}
+                    disabled={current_target()!.ending_velocity === undefined}
+                    value={current_target()!.ending_velocity}
                 />
                 <button
                     type="button"
@@ -102,8 +111,8 @@
                 Entry Angle:
                 <input
                     type="number"
-                    disabled={current_target.entry_angle === undefined}
-                    value={current_target.entry_angle}
+                    disabled={current_target()!.entry_angle === undefined}
+                    value={current_target()!.entry_angle}
                 />
                 <button
                     type="button"
@@ -124,8 +133,8 @@
                 Turning Radius:
                 <input
                     type="number"
-                    disabled={current_target.turning_radius === undefined}
-                    value={current_target.turning_radius}
+                    disabled={current_target()!.turning_radius === undefined}
+                    value={current_target()!.turning_radius}
                 />
                 <button
                     type="button"
@@ -145,11 +154,6 @@
         </form>
     {:else}
         <h1>Targets</h1>
-        <button
-            onclick={() => console.log(export_targets_to_kotlin_enum($targets))}
-        >
-            Export Targets
-        </button>
         <ul>
             {#each $targets.entries() as [index, target]}
                 <li>
@@ -159,6 +163,14 @@
                 </li>
             {/each}
         </ul>
+        <hr />
+        <h1>Config</h1>
+        <button onclick={() => copy_kotlin_to_clipboard($targets)}>
+            Export to Clipboard
+        </button>
+        <button onclick={() => modal_state.set("edit_settings")}>
+            Edit Settings
+        </button>
     {/if}
 </div>
 

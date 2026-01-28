@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { onMount } from "svelte";
     import { snap_value } from "../scripts/helpers";
     import {
         selected_target,
@@ -8,28 +7,32 @@
         settings,
         type Target,
     } from "../scripts/store";
-    var field_image: HTMLElement;
+
+    var field_image: HTMLImageElement | undefined = $state();
 
     const field_width = 16.54048; //meters
     const field_height = 8.06958; //meters
-    var pixels_to_meters: number = 0;
+    var pixels_to_meters: number = $state(0);
     var field_container_bounds: DOMRect = new DOMRect();
-    var field_top: number = 0;
-    var field_left: number = 0;
+    var field_top: number = $state(0);
+    var field_left: number = $state(0);
 
     var mouse_moved_before_mouseup = false;
 
     function get_field_dims() {
-        field_container_bounds = field_image.getBoundingClientRect();
+        field_container_bounds = field_image!.getBoundingClientRect();
         field_top =
             field_container_bounds.top -
-            field_image.parentElement!.getBoundingClientRect().top;
+            field_image!.parentElement!.getBoundingClientRect().top;
         field_left =
             field_container_bounds.left -
-            field_image.parentElement!.getBoundingClientRect().left;
+            field_image!.parentElement!.getBoundingClientRect().left;
         pixels_to_meters = field_width / field_container_bounds.width;
     }
     window.addEventListener("resize", get_field_dims);
+    $effect(() => {
+        get_field_dims();
+    });
 
     interface Position {
         x: number;
@@ -107,12 +110,7 @@
         console.log($targets, $selected_target);
     }
 
-    function handle_rotate_target(e: PointerEvent, index: number) {
-        const el = e.currentTarget as HTMLElement;
-        if (!el.hasPointerCapture(e.pointerId)) {
-            return;
-        }
-
+    function get_theta(e: PointerEvent, index: number): number {
         const real_tap_coords = field_relative_real_coords({
             x: e.clientX,
             y: e.clientY,
@@ -126,9 +124,19 @@
         if ($snapping_enabled) {
             new_theta = snap_value(new_theta, Math.PI / 8);
         }
+        return new_theta;
+    }
+
+    function handle_rotate_target(e: PointerEvent, index: number) {
+        const el = e.currentTarget as HTMLElement;
+        if (!el.hasPointerCapture(e.pointerId)) {
+            return;
+        }
+
+        const theta = get_theta(e, index);
 
         const current_targets = $targets;
-        current_targets[index].reference.rotation = new_theta;
+        current_targets[index].reference.rotation = theta;
         targets.set(current_targets);
     }
 
@@ -183,12 +191,27 @@
         current_targets[index].turning_radius = new_radius;
         targets.set(current_targets);
     }
+
+    function handle_rotate_target_entry_angle(e: PointerEvent, index: number) {
+        const el = e.currentTarget as HTMLElement;
+        if (!el.hasPointerCapture(e.pointerId)) {
+            return;
+        }
+
+        const theta = get_theta(e, index);
+
+        const current_targets = $targets;
+        current_targets[index].entry_angle = theta;
+        targets.set(current_targets);
+    }
 </script>
 
 <div class="field-container" onmousedown={handle_click_on_field} role="none">
     {#each $targets.entries() as [index, target]}
         <div
-            class="target-container"
+            class={index === $selected_target
+                ? "target_container selected"
+                : "target_container"}
             style="transform: translate(calc(-50% + {real_to_pixels(
                 target.reference,
             ).x + field_left}px), calc(-50% + {real_to_pixels(target.reference)
@@ -244,9 +267,42 @@
                         ></div>
                     </div>
                 {/if}
-                {#if target.turning_radius !== undefined}
-                    <div class="entry_angle_container">
-                        <div class="entry_angle_rotator"></div>
+                {#if target.entry_angle !== undefined}
+                    <div
+                        class="entry_angle_container"
+                        style="transform: rotateZ({-target.entry_angle}rad)"
+                    >
+                        <div
+                            class="entry_angle_rotator exclude_tap"
+                            onpointerdown={(e) => {
+                                e.currentTarget.setPointerCapture(e.pointerId);
+                            }}
+                            onpointermove={(e) =>
+                                handle_rotate_target_entry_angle(e, index)}
+                            onpointerup={(e) => {
+                                e.currentTarget.releasePointerCapture(
+                                    e.pointerId,
+                                );
+                            }}
+                            onpointercancel={(e) => {
+                                e.currentTarget.releasePointerCapture(
+                                    e.pointerId,
+                                );
+                            }}
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="12"
+                                height="24"
+                                viewBox="0 0 12 24"
+                                class="exclude_tap arrow"
+                                ><path
+                                    fill="currentColor"
+                                    fill-rule="evenodd"
+                                    d="M10.157 12.711L4.5 18.368l-1.414-1.414l4.95-4.95l-4.95-4.95L4.5 5.64l5.657 5.657a1 1 0 0 1 0 1.414"
+                                /></svg
+                            >
+                        </div>
                     </div>
                 {/if}
             {/if}
@@ -285,6 +341,18 @@
                         mouse_moved_before_mouseup = false;
                     }}
                 >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="12"
+                        height="24"
+                        viewBox="0 0 12 24"
+                        class="exclude_tap"
+                        ><path
+                            fill="currentColor"
+                            fill-rule="evenodd"
+                            d="M10.157 12.711L4.5 18.368l-1.414-1.414l4.95-4.95l-4.95-4.95L4.5 5.64l5.657 5.657a1 1 0 0 1 0 1.414"
+                        /></svg
+                    >
                     {#if index === $selected_target}
                         <div
                             class="rotator exclude_tap"
@@ -338,12 +406,16 @@
         user-select: none;
     }
 
-    .target-container {
+    .target_container {
         left: 0;
         top: 0;
         position: absolute;
 
         contain: layout;
+    }
+
+    .target_container.selected {
+        z-index: 1000;
     }
 
     .rotate_with_target {
@@ -360,6 +432,13 @@
         border-radius: 5px;
         border: 2px solid #fff;
         cursor: grab;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .target_button > svg {
+        pointer-events: none;
     }
     .target_button:active {
         cursor: grabbing;
@@ -369,7 +448,6 @@
     }
     .target_button.selected {
         border-color: #ea0;
-        z-index: 1000;
     }
 
     .rotator {
@@ -379,7 +457,7 @@
         height: var(--size);
 
         position: absolute;
-        right: -100%;
+        right: calc(0% - 30px);
         top: calc(50% - (var(--size) / 2));
 
         border-radius: 100%;
@@ -419,5 +497,38 @@
         inset: -6px;
         border-radius: 50%;
         pointer-events: auto;
+    }
+
+    .entry_angle_container {
+        position: absolute;
+        inset: 0;
+
+        contain: layout;
+    }
+    .entry_angle_rotator {
+        position: absolute;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        right: calc(0% - 60px);
+        top: 50%;
+        transform: translate(-50%, -50%) rotateZ(180deg);
+
+        border-radius: 100%;
+
+        z-index: 1000;
+        cursor: grab;
+    }
+    .entry_angle_rotator:hover > .arrow {
+        color: #0ae;
+    }
+    .entry_angle_rotator:active {
+        cursor: grabbing;
+    }
+    .arrow {
+        pointer-events: none;
+        user-select: none;
+        color: #fff;
     }
 </style>

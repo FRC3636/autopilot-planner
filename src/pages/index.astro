@@ -1,6 +1,8 @@
 ---
 import SideBar from "../components/SideBar.svelte";
 import FieldView from "../components/FieldView.svelte";
+import Modal from "../components/Modal.svelte";
+
 import "../styles/fonts.css";
 ---
 
@@ -21,17 +23,20 @@ import "../styles/fonts.css";
                 <FieldView client:only />
             </div>
         </div>
+        <Modal client:only />
     </body>
 </html>
 
 <script>
-    import { import_targets_from_json } from "../scripts/export";
-    import { export_targets_to_json } from "../scripts/export";
+    import { import_state_from_json } from "../scripts/export";
+    import { export_state_to_json } from "../scripts/export";
     import {
         selected_target,
         targets,
         snapping_enabled,
         type Target,
+        settings,
+        type Settings,
     } from "../scripts/store";
 
     window.addEventListener("keydown", (e) => {
@@ -50,18 +55,25 @@ import "../styles/fonts.css";
         }
     });
 
-    let latestValue: Target[] = [];
+    let latest_targets: Target[] = [];
+    let latest_settings: Settings;
     let scheduled = false;
 
+    settings.subscribe((value) => {
+        latest_settings = value;
+    });
     targets.subscribe((value) => {
-        latestValue = value;
+        latest_targets = value;
 
         if (scheduled) return;
         scheduled = true;
 
         setTimeout(async () => {
             console.log("Exporting targets...");
-            const json_export = export_targets_to_json(latestValue);
+            const json_export = export_state_to_json(
+                latest_targets,
+                latest_settings,
+            );
             const directory = await navigator.storage.getDirectory();
             const file = await directory.getFileHandle("targets.json", {
                 create: true,
@@ -78,7 +90,9 @@ import "../styles/fonts.css";
     await navigator.storage.getDirectory().then(async (dir) => {
         const file = await dir.getFileHandle("targets.json");
         const json = await file.getFile().then((file) => file.text());
-        targets.set(import_targets_from_json(json));
+        const state = import_state_from_json(json);
+        targets.set(state.targets);
+        settings.set(state.settings);
     });
 </script>
 
