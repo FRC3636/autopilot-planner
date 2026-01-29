@@ -1,17 +1,17 @@
 <script lang="ts">
-    import { snap_value } from "../scripts/helpers";
+    import { field_width, field_height, snap_value } from "../scripts/helpers";
     import {
         selected_target,
         snapping_enabled,
         targets,
         settings,
         type Target,
+        multi_select_enabled,
+        additional_selected_targets,
     } from "../scripts/store";
 
     var field_image: HTMLImageElement | undefined = $state();
 
-    const field_width = 16.54048; //meters
-    const field_height = 8.06958; //meters
     var pixels_to_meters: number = $state(0);
     var field_container_bounds: DOMRect = new DOMRect();
     var field_top: number = $state(0);
@@ -102,6 +102,12 @@
                 rotation: 0,
             },
         };
+
+        if ($multi_select_enabled && $selected_target !== null) {
+            $additional_selected_targets.push($selected_target);
+        } else {
+            additional_selected_targets.set([]);
+        }
 
         const current_targets = $targets;
         const index = current_targets.push(new_target);
@@ -313,7 +319,9 @@
                 <button
                     class={index === $selected_target
                         ? "target_button selected exclude_tap"
-                        : "target_button exclude_tap"}
+                        : $additional_selected_targets.includes(index)
+                          ? "target_button additional_selected exclude_tap"
+                          : "target_button  exclude_tap"}
                     onpointerdown={(e) => {
                         if (!target_has_class(e, "target_button")) {
                             return;
@@ -336,6 +344,13 @@
                                 selected_target.set(null);
                             }
                         } else {
+                            if ($multi_select_enabled && $selected_target !== null) {
+                                $additional_selected_targets.push(
+                                    $selected_target,
+                                );
+                            } else {
+                                additional_selected_targets.set([]);
+                            }
                             selected_target.set(index);
                         }
                         mouse_moved_before_mouseup = false;
@@ -448,6 +463,9 @@
     }
     .target_button.selected {
         border-color: #ea0;
+    }
+    .target_button.additional_selected {
+        border-color: #a50;
     }
 
     .rotator {

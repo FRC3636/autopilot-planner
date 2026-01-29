@@ -152,6 +152,15 @@
                 </button>
             </label>
         </form>
+        <button
+            onclick={() => {
+                $targets = $targets.filter(
+                    (_, index) => index != $selected_target,
+                );
+            }}
+        >
+            Delete
+        </button>
     {:else}
         <h1>Targets</h1>
         <ul>

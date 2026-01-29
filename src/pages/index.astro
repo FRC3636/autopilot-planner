@@ -2,6 +2,7 @@
 import SideBar from "../components/SideBar.svelte";
 import FieldView from "../components/FieldView.svelte";
 import Modal from "../components/Modal.svelte";
+import FieldControls from "../components/FieldControls.svelte";
 
 import "../styles/fonts.css";
 ---
@@ -19,8 +20,11 @@ import "../styles/fonts.css";
             <div class="sidebar-container">
                 <SideBar client:only />
             </div>
-            <div class="field-view-container">
-                <FieldView client:only />
+            <div class="right-panel">
+                <FieldControls client:only />
+                <div class="field-view-container">
+                    <FieldView client:only />
+                </div>
             </div>
         </div>
         <Modal client:only />
@@ -34,30 +38,37 @@ import "../styles/fonts.css";
         selected_target,
         targets,
         snapping_enabled,
+        multi_select_enabled,
+        additional_selected_targets,
         type Target,
         settings,
         type Settings,
     } from "../scripts/store";
 
+    let latest_targets: Target[] = [];
+    let latest_settings: Settings;
+    let scheduled = false;
+
     window.addEventListener("keydown", (e) => {
         switch (e.key) {
             case "Escape":
                 selected_target.set(null);
+                additional_selected_targets.set([])
                 break;
             case "Alt":
                 snapping_enabled.set(true);
+            case "Shift":
+                multi_select_enabled.set(true);
         }
     });
     window.addEventListener("keyup", (e) => {
         switch (e.key) {
             case "Alt":
                 snapping_enabled.set(false);
+            case "Shift":
+                multi_select_enabled.set(false);
         }
     });
-
-    let latest_targets: Target[] = [];
-    let latest_settings: Settings;
-    let scheduled = false;
 
     settings.subscribe((value) => {
         latest_settings = value;
@@ -140,8 +151,17 @@ import "../styles/fonts.css";
     }
     .field-view-container {
         width: 100%;
-        padding: 10px;
+        height: 100%;
         border-radius: var(--border-radius) 0 0 var(--border-radius);
         overflow: hidden;
+    }
+    .right-panel {
+        display: flex;
+        flex-direction: column;
+
+        width: 100%;
+        height: 100%;
+        padding-inline: 10px;
+        padding-block: 20px;
     }
 </style>

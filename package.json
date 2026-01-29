@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@astrojs/svelte": "^7.2.5",
+    "@iconify/svelte": "^5.2.1",
     "astro": "^5.16.12",
     "change-case": "^5.4.4",
     "svelte": "^5.47.1",

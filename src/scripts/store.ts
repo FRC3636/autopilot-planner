@@ -19,8 +19,10 @@ export interface Settings {
 
 export const selected_target: Writable<number | null> = writable(0);
 export const targets: Writable<Target[]> = writable([]);
+export const additional_selected_targets: Writable<number[]> = writable([])
 
 export const snapping_enabled: Writable<boolean> = writable(false);
+export const multi_select_enabled: Writable<boolean> = writable(false);
 
 export const settings: Writable<Settings> = writable({
   robot_width: 0.5,
