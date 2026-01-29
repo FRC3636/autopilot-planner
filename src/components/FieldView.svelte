@@ -19,6 +19,26 @@
 
     var mouse_moved_before_mouseup = false;
 
+    function handle_select_target(index: number) {
+        if ($selected_target !== null) {
+            $additional_selected_targets.push($selected_target);
+        }
+        if (!$multi_select_enabled) {
+            additional_selected_targets.set([]);
+        }
+
+        if ($selected_target == index) {
+            selected_target.set(null);
+        } else {
+            selected_target.set(index);
+            additional_selected_targets.set(
+                $additional_selected_targets.filter(
+                    (t) => t != $selected_target,
+                ),
+            );
+        }
+    }
+
     function get_field_dims() {
         field_container_bounds = field_image!.getBoundingClientRect();
         field_top =
@@ -103,17 +123,11 @@
             },
         };
 
-        if ($multi_select_enabled && $selected_target !== null) {
-            $additional_selected_targets.push($selected_target);
-        } else {
-            additional_selected_targets.set([]);
-        }
-
         const current_targets = $targets;
         const index = current_targets.push(new_target);
         targets.set(current_targets);
-        selected_target.set(index - 1);
-        console.log($targets, $selected_target);
+
+        handle_select_target(index - 1);
     }
 
     function get_theta(e: PointerEvent, index: number): number {
@@ -339,19 +353,8 @@
 
                         e.currentTarget.releasePointerCapture(e.pointerId);
 
-                        if (index === $selected_target) {
-                            if (!mouse_moved_before_mouseup) {
-                                selected_target.set(null);
-                            }
-                        } else {
-                            if ($multi_select_enabled && $selected_target !== null) {
-                                $additional_selected_targets.push(
-                                    $selected_target,
-                                );
-                            } else {
-                                additional_selected_targets.set([]);
-                            }
-                            selected_target.set(index);
+                        if (!mouse_moved_before_mouseup) {
+                          handle_select_target(index);
                         }
                         mouse_moved_before_mouseup = false;
                     }}

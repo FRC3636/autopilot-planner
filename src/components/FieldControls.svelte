@@ -10,13 +10,10 @@
     import Trash from "./icon/Trash.svelte";
 
     function all_selected(): number[] {
-        let all_targets = $additional_selected_targets.concat(
-            $selected_target !== null ? [$selected_target] : [],
-        );
-        if ($selected_target !== null) {
-            all_targets.push($selected_target);
-        }
-        return all_targets;
+        return [
+            ...$additional_selected_targets,
+            ...($selected_target !== null ? [$selected_target] : []),
+        ];
     }
 
     function handle_mirror(direction: "vertical" | "horizontal") {
