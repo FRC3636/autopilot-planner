@@ -7,16 +7,20 @@
         type Target,
     } from "../scripts/store";
     import { field_height, field_width } from "../scripts/helpers";
+    import Trash from "./icon/Trash.svelte";
 
-    function handle_mirror(direction: "vertical" | "horizontal") {
-        let targets_to_mirror = $additional_selected_targets.concat(
+    function all_selected(): number[] {
+        let all_targets = $additional_selected_targets.concat(
             $selected_target !== null ? [$selected_target] : [],
         );
         if ($selected_target !== null) {
-            targets_to_mirror.push($selected_target);
+            all_targets.push($selected_target);
         }
-        console.log(targets_to_mirror);
+        return all_targets;
+    }
 
+    function handle_mirror(direction: "vertical" | "horizontal") {
+        const targets_to_mirror = all_selected();
         const mirror_func =
             direction === "horizontal"
                 ? ({ x, y }: { x: number; y: number }) => ({
@@ -48,7 +52,7 @@
         aria-label="Mirror Horizontally"
         onclick={() => handle_mirror("horizontal")}
     >
-        <Mirror  style="transform: rotateZ(90deg);" />
+        <Mirror style="transform: rotateZ(90deg);" />
     </button>
     <button
         class="control"
@@ -56,6 +60,24 @@
         onclick={() => handle_mirror("vertical")}
     >
         <Mirror />
+    </button>
+    <button
+        class="control"
+        aria-label="Delete"
+        onclick={() => {
+            const to_delete = all_selected();
+            targets.set(
+                $targets.filter((t, index) => !to_delete.includes(index)),
+            );
+            additional_selected_targets.set(
+                $additional_selected_targets.filter(
+                    (index) => !to_delete.includes(index),
+                ),
+            );
+            selected_target.set(null);
+        }}
+    >
+        <Trash />
     </button>
 </div>
 
