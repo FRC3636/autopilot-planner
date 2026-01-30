@@ -11,6 +11,10 @@
         settings,
         type Target,
     } from "../scripts/store";
+    import Minus from "./icon/Minus.svelte";
+    import Plus from "./icon/Plus.svelte";
+    import Trash from "./icon/Trash.svelte";
+    import NumberInput from "./NumberInput.svelte";
 
     const current_target = $derived(() =>
         $selected_target !== null ? $targets[$selected_target] : null,
@@ -49,7 +53,7 @@
                 X:
                 <input
                     type="number"
-                    value={current_target()!.reference.x}
+                    value={current_target()!.reference.x.toFixed(2)}
                     step="0.1"
                     oninput={(e) =>
                         set_selected_target_reference({
@@ -62,7 +66,7 @@
                 Y:
                 <input
                     type="number"
-                    value={current_target()!.reference.y}
+                    value={current_target()!.reference.y.toFixed(2)}
                     step="0.1"
                     oninput={(e) =>
                         set_selected_target_reference({
@@ -75,7 +79,7 @@
                 θ:
                 <input
                     type="number"
-                    value={current_target()!.reference.rotation}
+                    value={current_target()!.reference.rotation.toFixed(2)}
                     step="0.1"
                     oninput={(e) =>
                         set_selected_target_reference({
@@ -88,81 +92,33 @@
         <form>
             <label>
                 Ending Velocity:
-                <input
-                    type="number"
-                    disabled={current_target()!.ending_velocity === undefined}
+                <NumberInput
+                    nullable={{ default: 1.0 }}
                     value={current_target()!.ending_velocity}
+                    onchange={(v) =>
+                        set_selected_target_prop("ending_velocity", v)}
                 />
-                <button
-                    type="button"
-                    onclick={() =>
-                        set_selected_target_prop("ending_velocity", 1.0)}
-                >
-                    Add
-                </button>
-                <button
-                    type="button"
-                    onclick={() =>
-                        set_selected_target_prop("ending_velocity", undefined)}
-                >
-                    Remove
-                </button>
             </label>
             <br />
             <label>
                 Entry Angle:
-                <input
-                    type="number"
-                    disabled={current_target()!.entry_angle === undefined}
+                <NumberInput
+                    nullable={{ default: 0.0 }}
                     value={current_target()!.entry_angle}
+                    onchange={(v) => set_selected_target_prop("entry_angle", v)}
                 />
-                <button
-                    type="button"
-                    onclick={() => set_selected_target_prop("entry_angle", 0.0)}
-                >
-                    Add
-                </button>
-                <button
-                    type="button"
-                    onclick={() =>
-                        set_selected_target_prop("entry_angle", undefined)}
-                >
-                    Remove
-                </button>
             </label>
             <br />
             <label>
                 Turning Radius:
-                <input
-                    type="number"
-                    disabled={current_target()!.turning_radius === undefined}
+                <NumberInput
+                    nullable={{ default: 1.0 }}
                     value={current_target()!.turning_radius}
+                    onchange={(v) =>
+                        set_selected_target_prop("turning_radius", v)}
                 />
-                <button
-                    type="button"
-                    onclick={() =>
-                        set_selected_target_prop("turning_radius", 1.0)}
-                >
-                    Add
-                </button>
-                <button
-                    type="button"
-                    onclick={() =>
-                        set_selected_target_prop("turning_radius", undefined)}
-                >
-                    Remove
-                </button>
             </label>
         </form>
-        <button
-            onclick={() => {
-                $targets = $targets.filter(
-                    (_, index) => index != $selected_target,
-                );
-            }}
-        >
-            Delete
-        </button>
     {:else}
         <h1>Targets</h1>
         <ul>
@@ -201,5 +157,22 @@
     }
     li::marker {
         content: "-";
+    }
+
+    form {
+        border: 1px solid #fff;
+        border-radius: var(--border-radius);
+        display: flex;
+        flex-direction: column;
+        padding-block: 14px;
+        background-color: #444;
+    }
+    form > * {
+        border-top: 1px solid #fff;
+        padding-inline: 10px;
+        padding-block: 6px;
+    }
+    form :first-child {
+        border-top: none;
     }
 </style>

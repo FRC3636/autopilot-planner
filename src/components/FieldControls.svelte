@@ -6,11 +6,55 @@
         additional_selected_targets,
         type Target,
         modal_state,
+        snapping_enabled,
+        multi_select_enabled,
     } from "../scripts/store";
     import { field_height, field_width } from "../scripts/helpers";
     import Trash from "./icon/Trash.svelte";
     import Duplicate from "./icon/Duplicate.svelte";
     import Clear from "./icon/Clear.svelte";
+
+    window.addEventListener("keydown", (e) => {
+        switch (e.key) {
+            case "Escape":
+                selected_target.set(null);
+                additional_selected_targets.set([]);
+                break;
+            case "Alt":
+                snapping_enabled.set(true);
+                break;
+            case "Shift":
+                multi_select_enabled.set(true);
+                break;
+            case "Backspace":
+                handle_delete();
+                break;
+            case "D":
+                handle_duplicate();
+                break;
+            case "H":
+            case "h":
+                handle_mirror("horizontal");
+                break;
+            case "V":
+            case "v":
+                handle_mirror("vertical");
+                break;
+            case ",":
+                if (e.ctrlKey) {
+                    modal_state.set("edit_settings");
+                }
+                break;
+        }
+    });
+    window.addEventListener("keyup", (e) => {
+        switch (e.key) {
+            case "Alt":
+                snapping_enabled.set(false);
+            case "Shift":
+                multi_select_enabled.set(false);
+        }
+    });
 
     function all_selected(): number[] {
         return [
@@ -59,6 +103,35 @@
         targets.set(current_targets);
         console.log(current_targets);
     }
+
+    function handle_delete() {
+        const to_delete = all_selected();
+        targets.set($targets.filter((t, index) => !to_delete.includes(index)));
+        additional_selected_targets.set(
+            $additional_selected_targets.filter(
+                (index) => !to_delete.includes(index),
+            ),
+        );
+        selected_target.set(null);
+    }
+
+    function handle_duplicate() {
+        const new_selected_target =
+            $selected_target != null
+                ? $selected_target + $targets.length
+                : null;
+        const new_add_selections = $additional_selected_targets.map(
+            (i) => $targets.length + i,
+        );
+        const new_targets = all_selected().map((index) => {
+            let target = structuredClone($targets[index]);
+            target.name = `Target ${index + $targets.length}`;
+            return target;
+        });
+        targets.set($targets.concat(new_targets));
+        selected_target.set(new_selected_target);
+        additional_selected_targets.set(new_add_selections);
+    }
 </script>
 
 <div class="field_controls">
@@ -76,44 +149,13 @@
     >
         <Mirror />
     </button>
-    <button
-        class="control"
-        aria-label="Delete"
-        onclick={() => {
-            const to_delete = all_selected();
-            targets.set(
-                $targets.filter((t, index) => !to_delete.includes(index)),
-            );
-            additional_selected_targets.set(
-                $additional_selected_targets.filter(
-                    (index) => !to_delete.includes(index),
-                ),
-            );
-            selected_target.set(null);
-        }}
-    >
+    <button class="control" aria-label="Delete" onclick={() => handle_delete()}>
         <Trash />
     </button>
     <button
         class="control"
         aria-label="Duplicate"
-        onclick={() => {
-            const new_selected_target =
-                $selected_target != null
-                    ? $selected_target + $targets.length
-                    : null;
-            const new_add_selections = $additional_selected_targets.map(
-                (i) => $targets.length + i,
-            );
-            const new_targets = all_selected().map((index) => {
-                let target = structuredClone($targets[index]);
-                target.name = `Target ${index + $targets.length}`;
-                return target;
-            });
-            targets.set($targets.concat(new_targets));
-            selected_target.set(new_selected_target);
-            additional_selected_targets.set(new_add_selections);
-        }}
+        onclick={() => handle_duplicate()}
     >
         <Duplicate />
     </button>

@@ -37,11 +37,7 @@ import "../styles/fonts.css";
     import { import_state_from_json } from "../scripts/export";
     import { export_state_to_json } from "../scripts/export";
     import {
-        selected_target,
         targets,
-        snapping_enabled,
-        multi_select_enabled,
-        additional_selected_targets,
         type Target,
         settings,
         type Settings,
@@ -50,27 +46,6 @@ import "../styles/fonts.css";
     let latest_targets: Target[] = [];
     let latest_settings: Settings;
     let scheduled = false;
-
-    window.addEventListener("keydown", (e) => {
-        switch (e.key) {
-            case "Escape":
-                selected_target.set(null);
-                additional_selected_targets.set([])
-                break;
-            case "Alt":
-                snapping_enabled.set(true);
-            case "Shift":
-                multi_select_enabled.set(true);
-        }
-    });
-    window.addEventListener("keyup", (e) => {
-        switch (e.key) {
-            case "Alt":
-                snapping_enabled.set(false);
-            case "Shift":
-                multi_select_enabled.set(false);
-        }
-    });
 
     settings.subscribe((value) => {
         latest_settings = value;
@@ -143,7 +118,7 @@ import "../styles/fonts.css";
         flex-direction: row;
     }
     .sidebar-container {
-        width: 30vw;
+        width: 40vw;
         margin: 10px;
         padding: 10px;
         border-radius: var(--border-radius);
