@@ -1,12 +1,14 @@
 <script lang="ts">
     import {
         copy_kotlin_to_clipboard,
+        download_json_save,
         export_targets_to_kotlin_enum,
     } from "../scripts/export";
     import {
         modal_state,
         selected_target,
         targets,
+        settings,
         type Target,
     } from "../scripts/store";
 
@@ -177,6 +179,12 @@
         <button onclick={() => copy_kotlin_to_clipboard($targets)}>
             Export to Clipboard
         </button>
+        <button
+            onclick={() => download_json_save($targets, $settings, "data.json")}
+        >
+            Export to JSON
+        </button>
+        <br />
         <button onclick={() => modal_state.set("edit_settings")}>
             Edit Settings
         </button>

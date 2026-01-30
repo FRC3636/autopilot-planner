@@ -29,5 +29,5 @@ export const settings: Writable<Settings> = writable({
   robot_height: 0.5,
 });
 
-export type ModalState = "hidden" | "edit_settings";
+export type ModalState = "hidden" | "edit_settings" | "confirm_clear";
 export const modal_state: Writable<ModalState> = writable("hidden");

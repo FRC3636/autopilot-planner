@@ -1,3 +1,4 @@
+import { set } from "astro/zod";
 import type { Settings, Target } from "./store";
 import * as changeCase from "change-case";
 
@@ -47,4 +48,20 @@ enum class Targets(val target: APTarget) {
 
 export function copy_kotlin_to_clipboard(targets: Target[]): void {
   navigator.clipboard.writeText(export_targets_to_kotlin_enum(targets));
+}
+
+export function download_json_save(targets: Target[], settings: Settings, file_name: string) {
+  const blob = new Blob([export_state_to_json(targets, settings)], {
+    type: "application/json",
+  });
+
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = file_name;
+
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
 }
