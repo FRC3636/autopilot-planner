@@ -42,6 +42,7 @@ import "../styles/fonts.css";
         settings,
         type Settings,
     } from "../scripts/store";
+    import { set_theme } from "../scripts/theme";
 
     let latest_targets: Target[] = [];
     let latest_settings: Settings;
@@ -49,6 +50,7 @@ import "../styles/fonts.css";
 
     settings.subscribe((value) => {
         latest_settings = value;
+        set_theme(value.theme);
     });
     targets.subscribe((value) => {
         latest_targets = value;
@@ -95,9 +97,9 @@ import "../styles/fonts.css";
     body {
         margin: 0;
 
-        background-color: #222;
+        background-color: var(--bg-0);
         font-family: var(--font-body);
-        color: #eee;
+        color: var(--fg);
     }
 
     :global(h1, h2, h2, h3, h4, h5, h6) {
@@ -111,6 +113,26 @@ import "../styles/fonts.css";
         margin-block: 0.3em;
     }
 
+    :global(input) {
+        all: unset;
+        border: 1px solid var(--fg);
+        border-radius: 20px;
+        padding: 4px;
+        padding-inline: 8px;
+        background-color: var(--bg-1);
+        text-align: center;
+    }
+
+    :global(input[type="number"]) {
+        -moz-appearance: textfield;
+    }
+
+    :global(input[type="number"]::-webkit-inner-spin-button),
+    :global(input[type="number"]::-webkit-outer-spin-button) {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
     .main-layout {
         height: 100vh;
         width: 100vw;
@@ -118,12 +140,12 @@ import "../styles/fonts.css";
         flex-direction: row;
     }
     .sidebar-container {
-        width: 40vw;
+        width: 30vw;
         margin: 10px;
         padding: 10px;
         border-radius: var(--border-radius);
         overflow-y: scroll;
-        background-color: #333;
+        background-color: var(--bg-2);
         z-index: 100;
     }
     .field-view-container {
@@ -144,7 +166,7 @@ import "../styles/fonts.css";
     }
     .control-container {
         width: 50%;
-        background-color: #333;
+        background-color: var(--bg-2);
         height: 24px;
         padding: 10px;
         border-radius: var(--border-radius);

@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { isEmptyBindingElement } from "typescript";
     import {
         copy_kotlin_to_clipboard,
         download_json_save,
@@ -49,8 +50,8 @@
         <h1>{current_target()!.name}</h1>
         <h2>Pose</h2>
         <form>
-            <label>
-                X:
+            <div class="input_group">
+                <label for="x-coord"> X Position: </label>
                 <input
                     type="number"
                     value={current_target()!.reference.x.toFixed(2)}
@@ -59,11 +60,12 @@
                         set_selected_target_reference({
                             x: parseFloat(e.currentTarget.value),
                         })}
+                    id="x-coord"
                 />
-            </label>
+            </div>
             <br />
-            <label>
-                Y:
+            <div class="input_group">
+                <label for="y-coord"> Y Position: </label>
                 <input
                     type="number"
                     value={current_target()!.reference.y.toFixed(2)}
@@ -72,11 +74,12 @@
                         set_selected_target_reference({
                             y: parseFloat(e.currentTarget.value),
                         })}
+                    id="y-coord"
                 />
-            </label>
+            </div>
             <br />
-            <label>
-                θ:
+            <div class="input_group">
+                <label for="rotation"> Rotation: </label>
                 <input
                     type="number"
                     value={current_target()!.reference.rotation.toFixed(2)}
@@ -85,46 +88,54 @@
                         set_selected_target_reference({
                             rotation: parseFloat(e.currentTarget.value),
                         })}
+                    id="rotation"
                 />
-            </label>
+            </div>
         </form>
         <h2>Constants</h2>
         <form>
-            <label>
-                Ending Velocity:
+            <div class="input_group">
+                <label for="ending_velocity"> Ending Velocity: </label>
                 <NumberInput
                     nullable={{ default: 1.0 }}
                     value={current_target()!.ending_velocity}
                     onchange={(v) =>
                         set_selected_target_prop("ending_velocity", v)}
+                    id="ending_velocity"
                 />
-            </label>
+            </div>
+
             <br />
-            <label>
-                Entry Angle:
+            <div class="input_group">
+                <label for="entry_angle"> Entry Angle: </label>
                 <NumberInput
                     nullable={{ default: 0.0 }}
                     value={current_target()!.entry_angle}
                     onchange={(v) => set_selected_target_prop("entry_angle", v)}
+                    id="entry_angle"
                 />
-            </label>
+            </div>
+
             <br />
-            <label>
-                Turning Radius:
+            <div class="input_group">
+                <label for="turning_radius"> Turning Radius: </label>
                 <NumberInput
                     nullable={{ default: 1.0 }}
                     value={current_target()!.turning_radius}
                     onchange={(v) =>
                         set_selected_target_prop("turning_radius", v)}
+                    id="turning_radius"
                 />
-            </label>
+            </div>
         </form>
     {:else}
         <h1>Targets</h1>
         <ul>
             {#each $targets.entries() as [index, target]}
                 <li>
-                    <button onclick={() => selected_target.set(index)}
+                    <button
+                        class="target"
+                        onclick={() => selected_target.set(index)}
                         >{target.name}</button
                     >
                 </li>
@@ -132,16 +143,20 @@
         </ul>
         <hr />
         <h1>Config</h1>
-        <button onclick={() => copy_kotlin_to_clipboard($targets)}>
+        <button
+            class="large"
+            onclick={() => copy_kotlin_to_clipboard($targets)}
+        >
             Export to Clipboard
         </button>
         <button
+            class="large"
             onclick={() => download_json_save($targets, $settings, "data.json")}
         >
             Export to JSON
         </button>
         <br />
-        <button onclick={() => modal_state.set("edit_settings")}>
+        <button class="large" onclick={() => modal_state.set("edit_settings")}>
             Edit Settings
         </button>
     {/if}
@@ -160,19 +175,68 @@
     }
 
     form {
-        border: 1px solid #fff;
+        border: 1px solid var(--fg);
         border-radius: var(--border-radius);
         display: flex;
         flex-direction: column;
-        padding-block: 14px;
-        background-color: #444;
+        padding-block: 8px;
+        background-color: var(--surface-0);
     }
     form > * {
-        border-top: 1px solid #fff;
+        border-top: 1px solid var(--fg);
         padding-inline: 10px;
         padding-block: 6px;
     }
     form :first-child {
         border-top: none;
+    }
+
+    .input_group {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .input_group :first-child {
+        justify-self: left;
+    }
+    .input_group * {
+        justify-self: right;
+    }
+
+    button {
+        all: unset;
+        cursor: pointer;
+    }
+
+    button.target {
+        text-decoration: underline var(--accent) 1px;
+    }
+    button.target:hover {
+        color: var(--hover);
+    }
+    button.target:active {
+        color: var(--active);
+    }
+
+    button.large {
+        background-color: var(--surface-0);
+        border: 1px solid var(--fg);
+        border-radius: 10px;
+        padding-block: 4px;
+        padding-inline: 8px;
+    }
+    button.large:hover {
+        background-color: var(--surface-1);
+        border-color: var(--hover);
+    }
+    button.large:active {
+        background-color: var(--surface-1);
+        border-color: var(--active);
+    }
+
+    input {
+        width: 5ch;
+        text-align: center;
     }
 </style>

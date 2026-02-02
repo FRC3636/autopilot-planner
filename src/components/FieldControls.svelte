@@ -15,6 +15,13 @@
     import Clear from "./icon/Clear.svelte";
 
     window.addEventListener("keydown", (e) => {
+        const active_elem = document.activeElement;
+        const is_in_text_input =
+            active_elem?.tagName === "INPUT" ||
+            active_elem?.tagName === "TEXTAREA";
+
+        if (is_in_text_input) return;
+
         switch (e.key) {
             case "Escape":
                 selected_target.set(null);
@@ -149,7 +156,11 @@
     >
         <Mirror />
     </button>
-    <button class="control" aria-label="Delete" onclick={() => handle_delete()}>
+    <button
+        class="control destructive"
+        aria-label="Delete"
+        onclick={() => handle_delete()}
+    >
         <Trash />
     </button>
     <button
@@ -160,7 +171,7 @@
         <Duplicate />
     </button>
     <button
-        class="control"
+        class="control destructive"
         aria-label="Clear All"
         onclick={() => modal_state.set("confirm_clear")}
     >
@@ -178,12 +189,16 @@
 
     .control {
         all: unset;
-        color: #fff;
+        color: var(--fg);
     }
     .control:hover {
-        color: #ce2;
+        color: var(--hover);
     }
     .control:active {
-        color: #c2e;
+        color: var(--active);
+    }
+
+    .destructive:hover {
+        color: var(--hover-destructive);
     }
 </style>

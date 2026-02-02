@@ -354,7 +354,7 @@
                         e.currentTarget.releasePointerCapture(e.pointerId);
 
                         if (!mouse_moved_before_mouseup) {
-                          handle_select_target(index);
+                            handle_select_target(index);
                         }
                         mouse_moved_before_mouseup = false;
                     }}
@@ -448,7 +448,7 @@
         right: 0;
         bottom: 0;
         border-radius: 5px;
-        border: 2px solid #fff;
+        border: 2px solid var(--fg);
         cursor: grab;
 
         display: flex;
@@ -462,13 +462,13 @@
         cursor: grabbing;
     }
     .target_button:hover {
-        border-color: #0ae;
+        border-color: var(--hover);
     }
     .target_button.selected {
-        border-color: #ea0;
+        border-color: var(--accent);
     }
     .target_button.additional_selected {
-        border-color: #a50;
+        border-color: color-mix(in srgb, var(--accent) 60%, var(--bg-0));
     }
 
     .rotator {
@@ -482,12 +482,12 @@
         top: calc(50% - (var(--size) / 2));
 
         border-radius: 100%;
-        background-color: #fff;
+        background-color: var(--fg);
         z-index: 10;
         cursor: grab;
     }
     .rotator:hover {
-        background-color: #0ae;
+        background-color: var(--hover);
     }
     .rotator:active {
         cursor: grabbing;
@@ -502,7 +502,7 @@
 
     .ring-visual {
         border-radius: 50%;
-        border: 2px solid #fff;
+        border: 2px solid var(--fg);
         /*background: repeating-linear-gradient(
             135deg,
             #0ae3 0px,
@@ -510,7 +510,7 @@
             #0ae1 5px,
             #0ae1 10px
         );*/
-        background-color: #0ae3;
+        background-color: color-mix(in srgb, var(--accent) 20%, #0000);
         pointer-events: none;
     }
     .ring-hit {
@@ -542,7 +542,7 @@
         cursor: grab;
     }
     .entry_angle_rotator:hover > .arrow {
-        color: #0ae;
+        color: var(--hover);
     }
     .entry_angle_rotator:active {
         cursor: grabbing;
@@ -550,6 +550,6 @@
     .arrow {
         pointer-events: none;
         user-select: none;
-        color: #fff;
+        color: var(--fg);
     }
 </style>
