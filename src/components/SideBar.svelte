@@ -16,6 +16,7 @@
     import Plus from "./icon/Plus.svelte";
     import Trash from "./icon/Trash.svelte";
     import NumberInput from "./NumberInput.svelte";
+    import Export from "./icon/Export.svelte";
 
     const current_target = $derived(() =>
         $selected_target !== null ? $targets[$selected_target] : null,
@@ -143,18 +144,22 @@
         </ul>
         <hr />
         <h1>Config</h1>
-        <button
-            class="large"
-            onclick={() => copy_kotlin_to_clipboard($targets)}
-        >
-            Export to Clipboard
-        </button>
-        <button
-            class="large"
-            onclick={() => download_json_save($targets, $settings, "data.json")}
-        >
-            Export to JSON
-        </button>
+
+        <div class="export_options">
+            <button
+                class="large"
+                onclick={() => copy_kotlin_to_clipboard($targets)}
+            >
+                <Export width="16" height="16" /> Clipboard
+            </button>
+            <button
+                class="large"
+                onclick={() =>
+                    download_json_save($targets, $settings, "data.json")}
+            >
+                <Export width="16" height="16" /> JSON
+            </button>
+        </div>
         <br />
         <button class="large" onclick={() => modal_state.set("edit_settings")}>
             Edit Settings
@@ -225,6 +230,11 @@
         border-radius: 10px;
         padding-block: 4px;
         padding-inline: 8px;
+
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 0.5ch;
     }
     button.large:hover {
         background-color: var(--surface-1);
@@ -238,5 +248,16 @@
     input {
         width: 5ch;
         text-align: center;
+    }
+
+    .export_options {
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        gap: 8px;
+    }
+    .export_options * {
+        width: 100%;
+        justify-content: center;
     }
 </style>

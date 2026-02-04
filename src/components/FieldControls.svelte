@@ -22,6 +22,8 @@
 
         if (is_in_text_input) return;
 
+        let a_selects = true;
+
         switch (e.key) {
             case "Escape":
                 selected_target.set(null);
@@ -50,6 +52,21 @@
             case ",":
                 if (e.ctrlKey) {
                     modal_state.set("edit_settings");
+                }
+                break;
+            case "a":
+            case "A":
+                if (a_selects) {
+                    additional_selected_targets.set(
+                        $targets
+                            .map((_, index) => index)
+                            .filter((index) => $selected_target !== index),
+                    );
+                    a_selects = false
+                } else {
+                    additional_selected_targets.set([]);
+                    selected_target.set(null);
+                    a_selects = true
                 }
                 break;
         }
@@ -108,7 +125,6 @@
             current_targets[index].reference = new_pos;
         });
         targets.set(current_targets);
-        console.log(current_targets);
     }
 
     function handle_delete() {

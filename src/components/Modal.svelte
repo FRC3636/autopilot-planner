@@ -78,10 +78,6 @@
         >
         <br />
     {/if}
-
-    <button class="close_button" autofocus onclick={() => dialog!.close()}
-        >close modal</button
-    >
 </dialog>
 
 <style>
