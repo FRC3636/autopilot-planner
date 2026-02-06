@@ -10,7 +10,7 @@
     }
     const {
         nullable = false,
-        value = $bindable(),
+        value,
         onchange,
         ...others
     }: Props = $props();

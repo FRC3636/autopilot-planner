@@ -12,9 +12,6 @@
         settings,
         type Target,
     } from "../scripts/store";
-    import Minus from "./icon/Minus.svelte";
-    import Plus from "./icon/Plus.svelte";
-    import Trash from "./icon/Trash.svelte";
     import NumberInput from "./NumberInput.svelte";
     import Export from "./icon/Export.svelte";
 

@@ -75,6 +75,37 @@ import "../styles/fonts.css";
 
             scheduled = false;
         }, 250);
+
+        window.addEventListener("dragover", (e) => {
+            if (!e.dataTransfer) {
+                return;
+            }
+            const fileItems = [...e.dataTransfer.items].filter(
+                (item) => item.kind === "file",
+            );
+            if (fileItems.length > 0) {
+                e.preventDefault();
+            }
+        });
+
+        window.addEventListener("drop", async (ev) => {
+            if (!ev.dataTransfer) {
+                return;
+            }
+
+            if (
+                [...ev.dataTransfer.items].some((item) => item.kind === "file")
+            ) {
+                ev.preventDefault();
+            }
+            console.log(ev.dataTransfer);
+
+            const files = ev.dataTransfer.files;
+            const save_data = files.item(0)!;
+            const state = import_state_from_json(await save_data.text());
+            targets.set(state.targets);
+            settings.set(state.settings);
+        });
     });
 
     await navigator.storage.getDirectory().then(async (dir) => {
