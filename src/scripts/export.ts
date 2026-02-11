@@ -19,11 +19,11 @@ export function import_state_from_json(json: string): {
 }
 
 function target_to_ap(target: Target): string {
-  const constructor = `APTarget()`;
-
   const reference = `Pose2d(${target.reference.x}.meters, ${target.reference.y}.meters, Rotation2d(${target.reference.rotation}.radians))`;
 
-  var builders = [constructor, `withReference(${reference})`];
+  const constructor = `APTarget(${reference})`;
+
+  var builders = [constructor];
 
   if (target.ending_velocity !== undefined) {
     builders.push(`withVelocity(${target.ending_velocity})`);

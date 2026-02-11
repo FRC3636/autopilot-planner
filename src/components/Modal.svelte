@@ -19,8 +19,8 @@
               ? "Confirm Clear"
               : "DEBUG",
     );
-    const width = $derived($settings.robot_width)
-    const height = $derived($settings.robot_height)
+    const width = $derived($settings.robot_width);
+    const height = $derived($settings.robot_height);
 
     $effect(() => {
         if (!hidden()) {
@@ -43,7 +43,7 @@
     {#if $modal_state === "edit_settings"}
         <form>
             <div class="input_group">
-                <label for="robot_width"> X Position: </label>
+                <label for="robot_width"> Robot width: </label>
                 <input
                     id="robot_width"
                     step="0.1"
@@ -54,7 +54,7 @@
             </div>
             <br />
             <div class="input_group">
-                <label for="robot_height"> X Position: </label>
+                <label for="robot_height"> Robot height: </label>
                 <input
                     id="robot_height"
                     step="0.1"
