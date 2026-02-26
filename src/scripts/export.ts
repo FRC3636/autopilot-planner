@@ -19,20 +19,24 @@ export function import_state_from_json(json: string): {
 }
 
 function target_to_ap(target: Target): string {
-  const reference = `Pose2d(${target.reference.x}.meters, ${target.reference.y}.meters, Rotation2d(${target.reference.rotation}.radians))`;
+  const reference = `Pose2d(${target.reference.x.toFixed(2)}.meters, ${target.reference.y.toFixed(2)}.meters, Rotation2d(${target.reference.rotation.toFixed(2)}.radians))`;
 
   const constructor = `APTarget(${reference})`;
 
   var builders = [constructor];
 
   if (target.ending_velocity !== undefined) {
-    builders.push(`withVelocity(${target.ending_velocity})`);
+    builders.push(`withVelocity(${target.ending_velocity.toFixed(2)})`);
   }
   if (target.entry_angle !== undefined) {
-    builders.push(`withEntryAngle(Rotation2d(${target.entry_angle}.radians))`);
+    builders.push(
+      `withEntryAngle(Rotation2d(${target.entry_angle.toFixed(2)}.radians))`,
+    );
   }
   if (target.turning_radius !== undefined) {
-    builders.push(`withTurningRadius(${target.turning_radius}.meters)`);
+    builders.push(
+      `withTurningRadius(${target.turning_radius.toFixed(2)}.meters)`,
+    );
   }
 
   return builders.join(".");
@@ -50,7 +54,11 @@ export function copy_kotlin_to_clipboard(targets: Target[]): void {
   navigator.clipboard.writeText(export_targets_to_kotlin_enum(targets));
 }
 
-export function download_json_save(targets: Target[], settings: Settings, file_name: string) {
+export function download_json_save(
+  targets: Target[],
+  settings: Settings,
+  file_name: string,
+) {
   const blob = new Blob([export_state_to_json(targets, settings)], {
     type: "application/json",
   });
