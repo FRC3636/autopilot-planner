@@ -32,5 +32,5 @@ export const settings: Writable<Settings> = writable({
   theme: "Catppuccin Mocha",
 });
 
-export type ModalState = "hidden" | "edit_settings" | "confirm_clear";
+export type ModalState = "hidden" | "edit_settings" | "confirm_clear" | "edit_name";
 export const modal_state: Writable<ModalState> = writable("hidden");

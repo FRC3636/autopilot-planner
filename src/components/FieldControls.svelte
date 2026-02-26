@@ -54,6 +54,12 @@
                     modal_state.set("edit_settings");
                 }
                 break;
+            case "R":
+                if ($selected_target !== null) {
+                    modal_state.set("edit_name");
+                }
+                e.stopPropagation();
+                break;
             case "a":
             case "A":
                 if (a_selects) {
@@ -62,11 +68,11 @@
                             .map((_, index) => index)
                             .filter((index) => $selected_target !== index),
                     );
-                    a_selects = false
+                    a_selects = false;
                 } else {
                     additional_selected_targets.set([]);
                     selected_target.set(null);
-                    a_selects = true
+                    a_selects = true;
                 }
                 break;
         }

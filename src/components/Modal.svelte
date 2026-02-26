@@ -5,6 +5,7 @@
         selected_target,
         settings,
         targets,
+        type ModalState,
     } from "../scripts/store";
     import { THEME_SELECTIONS } from "../scripts/theme";
     import NumberInput from "./NumberInput.svelte";
@@ -12,18 +13,31 @@
     let dialog: HTMLDialogElement | undefined = $state();
     let hidden = $derived(() => $modal_state === "hidden");
 
-    const title = $derived(
-        $modal_state === "edit_settings"
-            ? "Edit Settings"
-            : $modal_state === "confirm_clear"
-              ? "Confirm Clear"
-              : "DEBUG",
-    );
+    function get_title(state: ModalState): string {
+        switch (state) {
+            case "edit_settings":
+                return "Edit Settings";
+            case "confirm_clear":
+                return "Clear Targets?";
+            case "edit_name":
+                return "Edit Target Name";
+        }
+        return "DEBUG";
+    }
+
+    const title = $derived(get_title($modal_state));
     const width = $derived($settings.robot_width);
     const height = $derived($settings.robot_height);
 
     $effect(() => {
         if (!hidden()) {
+            dialog!.showModal();
+        } else {
+            dialog!.close();
+        }
+    });
+    $effect(() => {
+        if ($modal_state) {
             dialog!.showModal();
         } else {
             dialog!.close();
@@ -87,6 +101,16 @@
             }}>CONFIRM</button
         >
         <br />
+    {/if}
+    {#if $modal_state === "edit_name"}
+        <label for="name"> Name: </label>
+        <input
+            id="name"
+            type="text"
+            value={$targets[$selected_target!].name}
+            oninput={(e) =>
+                ($targets[$selected_target!].name = e.target!.value)}
+        />
     {/if}
 </dialog>
 
