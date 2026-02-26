@@ -5,6 +5,7 @@ export interface Target {
   entry_angle?: number;
   ending_velocity?: number;
   turning_radius?: number;
+  tolerance?: number;
   name: string;
   reference: {
     x: number;

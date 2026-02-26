@@ -19,24 +19,27 @@ export function import_state_from_json(json: string): {
 }
 
 function target_to_ap(target: Target): string {
-  const reference = `Pose2d(${target.reference.x.toFixed(2)}.meters, ${target.reference.y.toFixed(2)}.meters, Rotation2d(${target.reference.rotation.toFixed(2)}.radians))`;
+  const reference = `Pose2d(${target.reference.x.toFixed(3)}.meters, ${target.reference.y.toFixed(3)}.meters, Rotation2d(${target.reference.rotation.toFixed(3)}.radians))`;
 
-  const constructor = `APTarget(${reference})`;
+  const constructor = `APTargetWithTolerance(${reference})`;
 
   var builders = [constructor];
 
   if (target.ending_velocity !== undefined) {
-    builders.push(`withVelocity(${target.ending_velocity.toFixed(2)})`);
+    builders.push(`withVelocity(${target.ending_velocity.toFixed(3)})`);
   }
   if (target.entry_angle !== undefined) {
     builders.push(
-      `withEntryAngle(Rotation2d(${target.entry_angle.toFixed(2)}.radians))`,
+      `withEntryAngle(Rotation2d(${target.entry_angle.toFixed(3)}.radians))`,
     );
   }
   if (target.turning_radius !== undefined) {
     builders.push(
-      `withTurningRadius(${target.turning_radius.toFixed(2)}.meters)`,
+      `withTurningRadius(${target.turning_radius.toFixed(3)}.meters)`,
     );
+  }
+  if (target.tolerance !== undefined) {
+    builders.push(`withTolerance(${target.tolerance.toFixed(3)}.meters)`);
   }
 
   return builders.join(".");
@@ -44,7 +47,7 @@ function target_to_ap(target: Target): string {
 
 export function export_targets_to_kotlin_enum(targets: Target[]): string {
   return `
-enum class Targets(val target: APTarget) {
+enum class Targets(val target: APTargetWithTolerance) {
     ${targets.map((target) => `${changeCase.pascalCase(target.name, { mergeAmbiguousCharacters: true })}(${target_to_ap(target)})`).join(",\n    ")}
 }
   `;

@@ -125,6 +125,17 @@
                     id="turning_radius"
                 />
             </div>
+
+            <br />
+            <div class="input_group">
+                <label for="tolerance"> Tolerance: </label>
+                <NumberInput
+                    nullable={{ default: 0.05 }}
+                    value={current_target()!.tolerance}
+                    onchange={(v) => set_selected_target_prop("tolerance", v)}
+                    id="tolerance"
+                />
+            </div>
         </form>
     {:else}
         <h1>Targets</h1>
