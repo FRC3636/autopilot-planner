@@ -54,7 +54,7 @@
                     type="number"
                     value={current_target()!.reference.x.toFixed(2)}
                     step="0.1"
-                    oninput={(e) =>
+                    onchange={(e) =>
                         set_selected_target_reference({
                             x: parseFloat(e.currentTarget.value),
                         })}
@@ -68,7 +68,7 @@
                     type="number"
                     value={current_target()!.reference.y.toFixed(2)}
                     step="0.1"
-                    oninput={(e) =>
+                    onchange={(e) =>
                         set_selected_target_reference({
                             y: parseFloat(e.currentTarget.value),
                         })}
@@ -82,7 +82,7 @@
                     type="number"
                     value={current_target()!.reference.rotation.toFixed(2)}
                     step="0.1"
-                    oninput={(e) =>
+                    onchange={(e) =>
                         set_selected_target_reference({
                             rotation: parseFloat(e.currentTarget.value),
                         })}

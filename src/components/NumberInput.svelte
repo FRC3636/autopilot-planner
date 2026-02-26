@@ -22,7 +22,7 @@
         disabled={value === undefined}
         value={value?.toFixed(2)}
         step="0.1"
-        oninput={(e) => onchange?.(parseFloat(e.currentTarget.value))}
+        onchange={(e) => onchange?.(parseFloat(e.currentTarget.value))}
         {...others}
     />
     {#if nullable !== false}
