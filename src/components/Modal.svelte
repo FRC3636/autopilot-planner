@@ -36,13 +36,6 @@
             dialog!.close();
         }
     });
-    $effect(() => {
-        if ($modal_state) {
-            dialog!.showModal();
-        } else {
-            dialog!.close();
-        }
-    });
 </script>
 
 <dialog
