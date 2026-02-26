@@ -26,7 +26,7 @@ function target_to_ap(target: Target): string {
   var builders = [constructor];
 
   if (target.ending_velocity !== undefined) {
-    builders.push(`withVelocity(${target.ending_velocity.toFixed(3)})`);
+    builders.push(`withVelocity(${target.ending_velocity.toFixed(3)}.metersPerSecond)`);
   }
   if (target.entry_angle !== undefined) {
     builders.push(
