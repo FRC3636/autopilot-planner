@@ -12,7 +12,16 @@
 
     var field_image: HTMLImageElement | undefined = $state();
 
+    const SVG_WIDTH = 1406;
+    const SVG_FIELD_LEFT = 4;
+    const SVG_FIELD_TOP = 4;
+    const SVG_FIELD_PIXEL_WIDTH = 1398; // inner right (1402) - inner left (4)
+    const SVG_FIELD_PIXEL_HEIGHT = 689; // inner bottom (693) - inner top (4)
+
     var pixels_to_meters: number = $state(0);
+    var y_pixels_to_meters: number = $state(0);
+    var field_origin_x: number = $state(0); // rendered px from image left to field origin
+    var field_origin_y: number = $state(0); // rendered px from image top to field origin
     var field_container_bounds: DOMRect = new DOMRect();
     var field_top: number = $state(0);
     var field_left: number = $state(0);
@@ -47,7 +56,12 @@
         field_left =
             field_container_bounds.left -
             field_image!.parentElement!.getBoundingClientRect().left;
-        pixels_to_meters = field_width / field_container_bounds.width;
+
+        const render_scale = field_container_bounds.width / SVG_WIDTH;
+        field_origin_x = SVG_FIELD_LEFT * render_scale;
+        field_origin_y = SVG_FIELD_TOP * render_scale;
+        pixels_to_meters = field_width / (SVG_FIELD_PIXEL_WIDTH * render_scale);
+        y_pixels_to_meters = field_height / (SVG_FIELD_PIXEL_HEIGHT * render_scale);
     }
     window.addEventListener("resize", get_field_dims);
     $effect(() => {
@@ -64,22 +78,24 @@
 
     function pixels_to_real(coords: Position): Position {
         return {
-            x: coords.x * pixels_to_meters,
-            y: field_height - coords.y * pixels_to_meters,
+            x: field_width - (coords.x - field_origin_x) * pixels_to_meters,
+            y: (coords.y - field_origin_y) * y_pixels_to_meters,
         };
     }
     function pixels_to_real_clamped(coords: Position): Position {
+        const half_w = $settings.robot_width / 2;
+        const half_h = $settings.robot_height / 2;
         const real = pixels_to_real(coords);
         return {
-            x: clamp(real.x, 0, field_width),
-            y: clamp(real.y, 0, field_height),
+            x: clamp(real.x, half_w, field_width - half_w),
+            y: clamp(real.y, half_h, field_height - half_h),
         };
     }
 
     function real_to_pixels(coords: Position): Position {
         return {
-            x: coords.x / pixels_to_meters,
-            y: (field_height - coords.y) / pixels_to_meters,
+            x: (field_width - coords.x) / pixels_to_meters + field_origin_x,
+            y: coords.y / y_pixels_to_meters + field_origin_y,
         };
     }
 
@@ -290,7 +306,7 @@
                 {#if target.entry_angle !== undefined}
                     <div
                         class="entry_angle_container"
-                        style="transform: rotateZ({-target.entry_angle}rad)"
+                        style="transform: rotateZ({Math.PI - target.entry_angle}rad)"
                     >
                         <div
                             class="entry_angle_rotator exclude_tap"
@@ -328,7 +344,7 @@
             {/if}
             <div
                 class="rotate_with_target"
-                style="transform: rotateZ({-target.reference.rotation}rad)"
+                style="transform: rotateZ({Math.PI - target.reference.rotation}rad)"
             >
                 <button
                     class={index === $selected_target
