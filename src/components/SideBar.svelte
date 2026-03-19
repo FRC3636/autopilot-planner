@@ -1,9 +1,9 @@
 <script lang="ts">
-    import { isEmptyBindingElement } from "typescript";
     import {
         copy_kotlin_to_clipboard,
         download_json_save,
         export_targets_to_kotlin_enum,
+        import_state_from_json,
     } from "../scripts/export";
     import {
         modal_state,
@@ -14,6 +14,21 @@
     } from "../scripts/store";
     import NumberInput from "./NumberInput.svelte";
     import Export from "./icon/Export.svelte";
+    import Import from "./icon/Import.svelte";
+
+    function open_json_import() {
+        const input = document.createElement("input");
+        input.type = "file";
+        input.accept = ".json";
+        input.onchange = async () => {
+            const file = input.files?.item(0);
+            if (!file) return;
+            const state = import_state_from_json(await file.text());
+            targets.set(state.targets);
+            settings.set(state.settings);
+        };
+        input.click();
+    }
 
     const current_target = $derived(() =>
         $selected_target !== null ? $targets[$selected_target] : null,
@@ -168,6 +183,10 @@
                 <Export width="16" height="16" /> JSON
             </button>
         </div>
+        <br />
+        <button class="large" onclick={open_json_import}>
+            <Import width="16" height="16" /> Import JSON
+        </button>
         <br />
         <button class="large" onclick={() => modal_state.set("edit_settings")}>
             Edit Settings
